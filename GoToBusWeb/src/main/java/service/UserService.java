@@ -1,8 +1,8 @@
 package service;
 
-import java.util.List; 
 
-import javax.ejb.EJB;
+
+import java.util.List; 
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,57 +11,56 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-
 import ejbs.User;
 
 
 @Stateless
-@Path("/users")
+@Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 
 public class UserService{
 	
-	@PersistenceContext(unitName= "User")
+	@PersistenceContext(unitName="hello")
     private EntityManager em;
 	
 	
 	
 	@POST
-	@Path("/register")
-	public void register(User NewUser) {
+	@Path("register")
+	public void register(User user) {
 		try
 		{
-			NewUser.setUserName(user.getUserName());
-			NewUser.setPassword(user.getPassword());
-			NewUser.setFullName(user.getFullName());
-			NewUser.setRole(user.getRole());
-			em.persist(NewUser);
+			user.getUserName();
+			user.getPassword();
+			user.getFullName();
+			user.getRole();
+			em.persist(user);
 		}
 		catch(Exception e) {
 			throw new EJBException(e);
 		} 
 	}
 	
-	@EJB
-	User user;
+	
 	
 	@POST
 	@Path("login") ///{userName}/{password}
-	public boolean login(String userName,String password) {
+	public String login(User user) {
 		try{
+			String userName=user.getUserName();
+			String password=user.getPassword();
+			Query query=em.createQuery
+					("SELECT u from User u WHERE u.userName = :userName and u.password = :password", User.class);
+			query.setParameter("userName", userName);
+			query.setParameter("password", password);
 			
-			Query query=em.createQuery("SELECT u from User u where u.userName LIKE ?1 and u.password LIKE ?2");
-			query.setParameter(1, userName);
-			query.setParameter(2, password);
-			user = (User) query.getResultList();
-            if (user != null){
-            System.out.println("Logged in Successfuly");
-            System.out.print("Hello" + user.getUserName());
-            return true;
+			User loggedInUser =(User) query.getSingleResult();
+			
+            if (loggedInUser != null){
+            return "Logged in Successfully";
             } else 
-                System.out.print("Wrong cridentials");
-            return false;
+            return "Wrong cridentials";
             }
 		catch(Exception e){
         	throw new EJBException(e);
@@ -71,15 +70,9 @@ public class UserService{
 	@GET
 	@Path("usersList")
 	public List<User> getAllUsers() {
-		TypedQuery<User> query = em.createQuery("SELECT u FROM User u", User.class);
+		TypedQuery<User> query = em.createQuery("SELECT u FROM User u ", User.class);
 		List<User> users = query.getResultList();
 		return users;
 }
-	
-	@GET
-	@Path("/hello")
-	public String sayHello() {
-		return user.getMsg();
-	}
 	
 }

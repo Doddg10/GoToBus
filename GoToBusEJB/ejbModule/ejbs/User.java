@@ -76,9 +76,5 @@ public class User implements Serializable {
 		this.role = role;
 		
 	}
-	
-	public String getMsg() {
-		return "Hello yazmele";
-	}
    
 }

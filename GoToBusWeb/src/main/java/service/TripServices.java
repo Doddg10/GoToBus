@@ -16,31 +16,26 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import ejb.Trip;
+import ejb.Station;
+import service.*;
 
 @Stateless
-@Path("trip")
+@Path("trips")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class TripServices {
 	
-	@PersistenceContext()
-	private EntityManager em;
-	@EJB
-	Trip trip;
+	@PersistenceContext(unitName="hello")
+    private EntityManager em;
+	
 	
 	@POST
-	@Path("trip")
-	public void createTrip(Trip newTrip)
+	@Path("createtrip")
+	public void createTrip(Trip Trip)
 	{
 		try
 		{
-//			Trip newTrip = new Trip();
-			newTrip.setFromStation(trip.getFromStation());
-			newTrip.setToStation(trip.getToStation());
-			newTrip.setSeatsNum(trip.getSeatsNum());
-			newTrip.setDepartureTime(trip.getDepartureTime());
-			newTrip.setArrivalTime(trip.getArrivalTime());
-			em.persist(newTrip);
+			em.persist(Trip);
 		}
 		catch(EJBException e)
 		{
@@ -49,38 +44,48 @@ public class TripServices {
 		
 	}
 	
-	@POST
-	@Path("searchtrips")
-	public List<Trip> searchTrips()
+	@GET
+	@Path("gettrips1")
+	public List<Trip> getTrips()
 	{
-		TypedQuery<Trip> query = em.createQuery("SELECT t from Trip t where departure_time >=?1 and arrival_time <=?2 and from_station LIKE?3 and to_station LIKE?4", Trip.class);
-		query.setParameter(1, trip.getDepartureTime());
-		query.setParameter(2, trip.getArrivalTime());
-		query.setParameter(3, trip.getFromStation());
-		query.setParameter(4, trip.getToStation());
+		TypedQuery<Trip> query = em.createQuery("SELECT t FROM Trip t",Trip.class);
 		return query.getResultList();
 	}
-
+	
+	
 	@POST
-	@Path("booktrip")
-	public void bookATrip()
+	@Path("gettrips2")
+	public List<Trip> getTrips(Trip Trip, Station Station)
 	{
-		TypedQuery<Trip> query = em.createQuery("SELECT t from Trip t where trip_id >=?1 and user_id <=?2 ", Trip.class);
-		
+		StationService s = new StationService();
+		Station station1 = s.getStation(Station.getFrom_station());
+		Station station2 = s.getStation(Station.getTo_station());
+		TypedQuery<Trip> query = em.createQuery("SELECT t FROM Trip t where t.departure_time >=?1 and t.arrival_time <=?2 and t.from_station LIKE ?3 and t.to_station LIKE ?4",Trip.class);
+		query.setParameter(1, Trip.getFrom_date());
+		query.setParameter(2, Trip.getTo_date());
+		query.setParameter(3, station1.getName());
+		query.setParameter(4, station2.getName());
+		return query.getResultList();
 	}
 	
 	
 	
+
+
+//	@POST
+//	@Path("booktrip")
+//	public void bookATrip()
+//	{
+//		TypedQuery<Trip> query = em.createQuery("SELECT t from Trip t where trip_id >=?1 and user_id <=?2 ", Trip.class);
+//		
+//	}
 	
 	
 	
 	
-	@GET
-	@Path("hello")
-	public String hello()
-	{
-		return "Hello";
-	}
+	
+	
+	
 	
 	
 }

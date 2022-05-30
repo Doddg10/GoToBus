@@ -5,7 +5,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -36,11 +35,7 @@ public class TripServices {
 	{
 		try
 		{
-			Trip.getFromStation();
-			Trip.getToStation();
-			Trip.getSeatsNum();
-			Trip.getDepartureTime();
-			Trip.getArrivalTime();
+		
 			em.persist(Trip);
 		}
 		catch(EJBException e)
@@ -54,21 +49,11 @@ public class TripServices {
 	@Path("gettrips")
 	public List<Trip> getTrips()
 	{
-		TypedQuery<Trip> query = em.createQuery("SELECT t from Trip t", Trip.class);
+		TypedQuery<Trip> query = em.createQuery("SELECT t FROM Trip t",Trip.class);
 		return query.getResultList();
 	}
 	
-	@POST
-	@Path("searchtrips")
-	public List<Trip> searchTrips()
-	{
-		TypedQuery<Trip> query = em.createQuery("SELECT t from Trip t where departure_time >=?1 and arrival_time <=?2 and from_station LIKE?3 and to_station LIKE?4", Trip.class);
-		query.setParameter(1, trip.getDepartureTime());
-		query.setParameter(2, trip.getArrivalTime());
-		query.setParameter(3, trip.getFromStation());
-		query.setParameter(4, trip.getToStation());
-		return query.getResultList();
-	}
+
 
 	@POST
 	@Path("booktrip")
@@ -84,11 +69,6 @@ public class TripServices {
 	
 	
 	
-	@GET
-	@Path("hello")
-	public String sayHello() {
-		return "Hello";
-	}
 	
 	
 }

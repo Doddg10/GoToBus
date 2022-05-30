@@ -8,79 +8,58 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import java.sql.Date;
-//import java.sql.Timestamp;
 
 @Stateless
 @LocalBean
 @Entity
-@Table(name="TRIP")
+@Table(name="Trip")
 public class Trip {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "trip_id")
 	private int id;
-	@Column(name = "from_station")
-	private String fromStation;
-	@Column(name = "to_station")
-	private String toStation;
-	@Temporal(TemporalType.DATE)
-	@Column(name = "departure_time")
-	private Date departureTime;
-	@Temporal(TemporalType.DATE)
-	@Column(name = "arrival_time")
-	private Date arrivalTime;
-	@Column(name = "available_seats")
-	private int seatsNum;
+	private String from_station;
+	private String to_station;
+	private int available_seats;
+	private String departure_time;
+	private String arrival_time;
 	
-	public Trip()
-	{
-		super();
-	}
-	
-	public int getSeatsNum() {
-		return seatsNum;
-	}
-	public void setSeatsNum(int seatsNum) {
-		this.seatsNum = seatsNum;
-	}
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getFromStation() {
-		return fromStation;
+	public String getFrom_station() {
+		return from_station;
 	}
-	public void setFromStation(String fromStation) {
-		this.fromStation = fromStation;
+	public void setFrom_station(String from_station) {
+		this.from_station = from_station;
 	}
-	public String getToStation() {
-		return toStation;
+	public String getTo_station() {
+		return to_station;
 	}
-	public void setToStation(String toStation) {
-		this.toStation = toStation;
+	public void setTo_station(String to_station) {
+		this.to_station = to_station;
 	}
-	public Date getDepartureTime() {
-		return departureTime;
+	public int getAvailable_seats() {
+		return available_seats;
 	}
-	public void setDepartureTime(Date departureTime) {
-		this.departureTime = departureTime;
+	public void setAvailable_seats(int available_seats) {
+		this.available_seats = available_seats;
 	}
-	public Date getArrivalTime() {
-		return arrivalTime;
+	public String getDeparture_time() {
+		return departure_time;
 	}
-	public void setArrivalTime(Date arrivalTime) {
-		this.arrivalTime = arrivalTime;
+	public void setDeparture_time(String departure_time) {
+		this.departure_time = departure_time;
 	}
-	public String getMsg()
-	{
-		return "hello";
+	public String getArrival_time() {
+		return arrival_time;
+	}
+	public void setArrival_time(String arrival_time) {
+		this.arrival_time = arrival_time;
 	}
 
 	

@@ -1,4 +1,4 @@
-package ejb;
+package ejbs;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ public class Station implements Serializable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
-	private Integer id;
+	private int id;
 	@Column(name="name")
 	private String name;
 	@Column(name="latitude")

@@ -16,19 +16,21 @@ import javax.persistence.Table;
 @Stateless
 @LocalBean
 @Table(name="STATION")
-public class Station{ // implements Serializable {
+public class Station implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
-	private Integer id;
+	private int id;
 	@Column(name="name")
 	private String name;
 	@Column(name="latitude")
 	private String latitude;
 	@Column(name="longitude")
-	private String longitude;   
-	//private static final long serialVersionUID = 1L;
+	private String longitude;
+	private int from_station;
+	private int to_station;
+	private static final long serialVersionUID = 1L;
 
 	public Station() {
 		super();
@@ -60,6 +62,18 @@ public class Station{ // implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public int getFrom_station() {
+		return from_station;
+	}
+	public void setFrom_station(int from_station) {
+		this.from_station = from_station;
+	}
+	public int getTo_station() {
+		return to_station;
+	}
+	public void setTo_station(int to_station) {
+		this.to_station = to_station;
 	}
 
 }

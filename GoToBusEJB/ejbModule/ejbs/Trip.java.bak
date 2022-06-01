@@ -1,9 +1,9 @@
 package ejbs;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.ejb.LocalBean; 
 import javax.ejb.Stateless;
 import javax.persistence.Column;
@@ -24,7 +24,6 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="Trip")
 public class Trip implements Serializable {
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "trip_id")
@@ -36,22 +35,25 @@ public class Trip implements Serializable {
 	private String arrival_time;
 	private String from_date;
 	private String to_date;
+	@Transient
+	private int user_id;
+
 	@ManyToMany(mappedBy = "trips", fetch = FetchType.EAGER)
 	private Set<User> users;
 //	@Transient
 //	private List<User> allUsers;
 	private static final long serialVersionUID = 1L;
 	
-	public Set<User> getUsers() {
-		return users;
+	public Trip()
+	{
+		users = new HashSet<>();
 	}
-
+	
 	public void addUser(User user)
 	{
 		users.add(user);
 	}
 	
-
 	public int getTrip_id() {
 		return trip_id;
 	}
@@ -101,6 +103,14 @@ public class Trip implements Serializable {
 	}
 	public void setTo_date(String to_date) {
 		this.to_date = to_date;
+	}
+	@Transient
+	public int retUserId() {
+		return user_id;
+	}
+	@Transient
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
 	}
 
 	

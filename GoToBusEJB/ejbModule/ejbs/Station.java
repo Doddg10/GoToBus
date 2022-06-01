@@ -1,4 +1,4 @@
-package ejbs;
+package ejb;
 
 import java.io.Serializable;
 

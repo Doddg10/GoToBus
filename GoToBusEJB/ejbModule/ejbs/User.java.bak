@@ -3,6 +3,10 @@ package ejbs;
 import java.io.Serializable; 
 import java.lang.Integer;
 import java.lang.String;
+import java.util.Set;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.persistence.*;
 
 
@@ -11,18 +15,50 @@ import javax.persistence.*;
  *
  */
 
+@Stateless
+@LocalBean
 @Entity
-
+@Table(name="User")
 public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+//	@Column(name = "user_id")
+	private int user_id;
 	private String userName;   
 	private String password;
 	private String fullName;
 	private String role;
+	
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name="UserXTrips",
+		joinColumns=@JoinColumn(name="user_id"),
+		inverseJoinColumns=@JoinColumn(name="trip_id"))
+	private Set<Trip> trips;
 	private static final long serialVersionUID = 1L;
+
+	public void addTrip(Trip trip)
+	{
+		trips.add(trip);
+	}
+	
+	
+	public Set<Trip> getTrips() {
+		return trips;
+	}
+
+
+	public int getUser_id() {
+		return user_id;
+	}
+
+
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+
 
 	public User() {
 		super();
@@ -40,14 +76,6 @@ public class User implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}  
-	
-	public int getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	
 	public void setPassword(String password)
 	{

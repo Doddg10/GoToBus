@@ -2,7 +2,11 @@ package service;
 
 
 
+import java.util.HashSet;
+
 import java.util.List;
+
+import java.util.Set;
 
 
 
@@ -27,6 +31,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 
 import javax.ws.rs.Path;
+
+import javax.ws.rs.PathParam;
 
 import javax.ws.rs.Produces;
 
@@ -180,21 +186,23 @@ public class TripService{
 
 	@Path("booktrip")
 
-	public boolean bookTrips(Trip trip, User user)
+	public boolean bookTrips(Trip trip)
 
 	{
 
 		
 
-		int x = user.getUser_id();
-
 		int y = trip.getTrip_id();
 
-		user = em.find(User.class, x);
+		int x = trip.retUserId();
 
-		trip = em.find(Trip.class, y);
+		User user = em.find(User.class, x);
 
-		if(trip.getAvailable_seats() == 0)
+		Trip trip1 = em.find(Trip.class, y);
+
+		em.detach(trip1);
+
+		if(trip1.getAvailable_seats() == 0)
 
 		{
 
@@ -202,19 +210,35 @@ public class TripService{
 
 		}
 
-		trip.setAvailable_seats(trip.getAvailable_seats()-1);
+		trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
 
-		user.addTrip(trip);
+		user.addTrip(trip1);
 
-		trip.addUser(user);
+		trip1.addUser(user);
 
-		em.merge(trip);
+		em.merge(trip1);
 
 		em.merge(user);
 
-		return true;		
+		return true;
 
 	}
+
+	
+
+//	@GET
+
+//	@Path("viewtrips/{user_id}")
+
+//	public Set<Trip> getStation(@PathParam("user_id")int id)
+
+//	{
+
+//		User user = em.find(User.class, id);
+
+//		return user.getTrips();
+
+//	}
 
 	
 

@@ -3,6 +3,7 @@ package ejbs;
 import java.io.Serializable; 
 import java.lang.Integer;
 import java.lang.String;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.LocalBean;
@@ -25,9 +26,9 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "user_id")
 	private int user_id;
-	private String userName;   
+	private String username;   
 	private String password;
-	private String fullName;
+	private String full_name;
 	private String role;
 	
 	
@@ -38,7 +39,12 @@ public class User implements Serializable {
 		inverseJoinColumns=@JoinColumn(name="trip_id"))
 	private Set<Trip> trips;
 	private static final long serialVersionUID = 1L;
-
+	
+	public User() {
+		super();
+		trips = new HashSet<>();
+	} 
+	
 	public void addTrip(Trip trip)
 	{
 		trips.add(trip);
@@ -60,23 +66,37 @@ public class User implements Serializable {
 	}
 
 
-	public User() {
-		super();
-	} 
+
 	
 	public User(String userName,String password) {
-		this.userName=userName;
+		this.username=userName;
 		this.password=password;
 	}  
 	
-	public String getUserName() {
-		return this.userName;
+ 
+	
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}  
-	
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+
+
+
+	public String getFull_name() {
+		return full_name;
+	}
+
+
+	public void setFull_name(String full_name) {
+		this.full_name = full_name;
+	}
+
+
 	public void setPassword(String password)
 	{
 		this.password=password;
@@ -87,14 +107,7 @@ public class User implements Serializable {
 		return this.password;
 	}
 	
-	public String getFullName() {
-		return fullName;
-		
-	}
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-		
-	}
+
 	public String getRole() {
 		return role;
 		

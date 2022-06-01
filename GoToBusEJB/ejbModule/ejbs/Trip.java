@@ -19,8 +19,8 @@ public class Trip {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private String from_station; //cairo
- 	private String to_station;	//Aswan
+	private String from_station; 
+ 	private String to_station;	
 	private int available_seats;
 	private String departure_time;
 	private String arrival_time;

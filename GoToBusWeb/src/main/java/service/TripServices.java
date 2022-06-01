@@ -26,11 +26,6 @@ public class TripServices{
 	
 	@PersistenceContext(unitName="hello")
     private EntityManager em;
-	@PersistenceContext(unitName="hello")
-	private EntityManager em2;
-	@PersistenceContext(unitName="hello")
-	private EntityManager em3;
-	
 	
 	@POST
 	@Path("createtrip")
@@ -57,7 +52,7 @@ public class TripServices{
 	
 	
 	@POST
-	@Path("gettrips2")
+	@Path("searchtrip")
 	public List<Trip> getTrips(Trip trip)
 	{		
 		String from_station = trip.getFrom_station();

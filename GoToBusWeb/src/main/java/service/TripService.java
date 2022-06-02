@@ -32,6 +32,7 @@ import ejbs.User;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class TripService{
+	static public User currentUser;
 	
 	@PersistenceContext(unitName="hello")
     private EntityManager em;
@@ -52,23 +53,29 @@ public class TripService{
 	{
 		try
 		{
-			TypedQuery<Station> query = em.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
-			query.setParameter(1, Trip.getFrom_station());
-			Station station = query.getSingleResult();
-			TypedQuery<Station> query2 = em2.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
-			query2.setParameter(1, Trip.getTo_station());
-			Station station2 = query2.getSingleResult();
-			if(station == station2)
-			{
-				throw new EJBException();
-			}
-			if(station != null && station2 != null)
-			{
-				em.persist(Trip);
-				return true;
+			if(currentUser.getRole().equalsIgnoreCase("Admin")) {
+				TypedQuery<Station> query = em.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
+				query.setParameter(1, Trip.getFrom_station());
+				Station station = query.getSingleResult();
+				TypedQuery<Station> query2 = em2.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
+				query2.setParameter(1, Trip.getTo_station());
+				Station station2 = query2.getSingleResult();
+				if(station == station2)
+				{
+					throw new EJBException();
+				}
+				if(station != null && station2 != null)
+				{
+					em.persist(Trip);
+					return true;
+				}
+				else
+					throw new EJBException();
 			}
 			else
+			{
 				throw new EJBException();
+			}
 		}
 		catch(EJBException e)
 		{

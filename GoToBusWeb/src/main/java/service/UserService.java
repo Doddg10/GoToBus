@@ -115,6 +115,8 @@ public class UserService{
             if (loggedInUser != null){
 
             	loggedInUser.Login();
+            	TripService s = new TripService();
+            	s.currentUser = loggedInUser;
 
             	em.merge(loggedInUser);
 

@@ -52,8 +52,23 @@ public class TripService{
 	{
 		try
 		{
-			em.persist(Trip);
-			return true;
+			TypedQuery<Station> query = em.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
+			query.setParameter(1, Trip.getFrom_station());
+			Station station = query.getSingleResult();
+			TypedQuery<Station> query2 = em2.createQuery("SELECT s FROM Station s where s.name =?1", Station.class);
+			query2.setParameter(1, Trip.getTo_station());
+			Station station2 = query2.getSingleResult();
+			if(station == station2)
+			{
+				throw new EJBException();
+			}
+			if(station != null && station2 != null)
+			{
+				em.persist(Trip);
+				return true;
+			}
+			else
+				throw new EJBException();
 		}
 		catch(EJBException e)
 		{
@@ -74,22 +89,33 @@ public class TripService{
 	@POST
 	@Path("gettrips2")
 	public List<Trip> getTrips(Trip trip)
-	{		
-		String from_station = trip.getFrom_station();
-		String to_station = trip.getTo_station();
-		int x = Integer.parseInt(from_station);
-		int y = Integer.parseInt(to_station);
-		Station s1= em.find(Station.class, x);
-		Station s2= em.find(Station.class, y);
+	{	
+		try
+		{
+			String from_station = trip.getFrom_station();
+			String to_station = trip.getTo_station();
+			int x = Integer.parseInt(from_station);
+			int y = Integer.parseInt(to_station);
+			Station s1= em.find(Station.class, x);
+			Station s2= em.find(Station.class, y);
+			if(s1 == null || s2 == null)
+			{
+				throw new EJBException();
+			}
+			Query query = em.createQuery("SELECT t FROM Trip t where t.departure_time >=?1 and t.arrival_time <=?2 and t.from_station = ?3 and t.to_station = ?4");	
+			query.setParameter(1, trip.getFrom_date());                    
+			query.setParameter(2, trip.getTo_date());	
+			query.setParameter(3, s1.getName());
+			query.setParameter(4, s2.getName());
+		
+			List <Trip> trips = (List<Trip>) query.getResultList();
+			return trips;
+		}
+		catch(Exception e)
+		{
+			throw new EJBException(e);
+		}
 
-		Query query = em.createQuery("SELECT t FROM Trip t where t.departure_time >=?1 and t.arrival_time <=?2 and t.from_station = ?3 and t.to_station = ?4");	
-		query.setParameter(1, trip.getFrom_date());                    
-		query.setParameter(2, trip.getTo_date());	
-		query.setParameter(3, s1.getName());
-		query.setParameter(4, s2.getName());
-	
-		List <Trip> trips = (List<Trip>) query.getResultList();
-		return trips;
 	}
 	
 	
@@ -110,25 +136,37 @@ public class TripService{
 			{
 				notification.setMessage("Sorry, you are not logged in");
 				notification.setNotification_datetime(notification_time.format(current_time));
+				notification.setUser(user);
+				user.addNotification(notification);
+				em.persist(notification);
+				em.merge(user);
 				throw new EJBException();
 			}
 			if(trip1.getAvailable_seats() == 0)
 			{
 				notification.setMessage("Sorry, trip " + trip1.getFrom_station() + " to " + trip1.getTo_station() + " has no available seats");
 				notification.setNotification_datetime(notification_time.format(current_time));
-				throw new EJBException();
+				notification.setUser(user);
+				user.addNotification(notification);
+				em.persist(notification);
+				em.merge(user);
+				return false;
 			}
-			trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
-			notification.setMessage("You have booked trip from " + trip1.getFrom_station() + " to " + trip1.getTo_station() + " successfully");
-			notification.setNotification_datetime(notification_time.format(current_time));
-			notification.setUser(user);
-			user.addTrip(trip1);
-			user.addNotification(notification);
-			trip1.addUser(user);
-			em.persist(notification);
-			em.merge(trip1);
-			em.merge(user);
-			return true;
+			else
+			{
+				trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
+				notification.setMessage("You have booked trip from " + trip1.getFrom_station() + " to " + trip1.getTo_station() + " successfully");
+				notification.setNotification_datetime(notification_time.format(current_time));
+				notification.setUser(user);
+				user.addTrip(trip1);
+				user.addNotification(notification);
+				trip1.addUser(user);
+				em.persist(notification);
+				em.merge(trip1);
+				em.merge(user);
+				return true;
+			}
+
 		}
 		catch(Exception e)
 		{

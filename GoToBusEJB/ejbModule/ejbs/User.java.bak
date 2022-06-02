@@ -11,10 +11,6 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 
 
-/**
- * Entity implementation class for Entity: User
- *
- */
 
 @Stateless
 @LocalBean
@@ -24,7 +20,6 @@ public class User implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	@Column(name = "user_id")
 	private int user_id;
 	private String username;   
 	private String password;
@@ -38,12 +33,22 @@ public class User implements Serializable {
 		joinColumns=@JoinColumn(name="user_id"),
 		inverseJoinColumns=@JoinColumn(name="trip_id"))
 	private Set<Trip> trips;
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	private Set<Notification> notification;
 	private static final long serialVersionUID = 1L;
+	
 	
 	public User() {
 		super();
 		trips = new HashSet<>();
+		notification = new HashSet<>();
 	} 
+	
+	public void addNotification(Notification notification)
+	{
+		this.notification.add(notification);
+	}
 	
 	public void addTrip(Trip trip)
 	{
@@ -128,5 +133,9 @@ public class User implements Serializable {
 
 	public boolean isLoggedIn() {
 		return loggedIn;
+	}
+
+	public Set<Notification> getNotification() {
+		return notification;
 	}
 }

@@ -66,7 +66,31 @@ public class Station implements Serializable {
 
 	private String longitude;
 
+	@ManyToOne(targetEntity = Trip.class)
+
+	@JoinColumn(name = "trip_id")
+
+	private Trip trip;
+
 	private static final long serialVersionUID = 1L;
+
+	
+
+	public void setTrip(Trip trip)
+
+	{
+
+		this.trip = trip;
+
+	}
+
+	public Trip retTrip()
+
+	{
+
+		return trip;
+
+	}
 
 
 

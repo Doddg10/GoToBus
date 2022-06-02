@@ -2,11 +2,8 @@ package service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -20,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
 import ejbs.Notification;
 import ejbs.Station;
 import ejbs.Trip;
@@ -38,14 +34,6 @@ public class TripService{
     private EntityManager em;
 	@PersistenceContext(unitName="hello")
 	private EntityManager em2;
-	@PersistenceContext(unitName="hello")
-	private EntityManager em3;
-	
-	
-	@EJB
-	Trip trip;
-	@EJB
-	User user;
 	
 	@POST
 	@Path("trip")
@@ -84,17 +72,9 @@ public class TripService{
 		
 	}
 	
-	@GET
-	@Path("gettrips1")
-	public List<Trip> getTrips()
-	{
-		TypedQuery<Trip> query = em.createQuery("SELECT t FROM Trip t",Trip.class);
-		return query.getResultList();
-	}
-	
 	
 	@POST
-	@Path("gettrips2")
+	@Path("searchtrips")
 	public List<Trip> getTrips(Trip trip)
 	{	
 		try
@@ -185,7 +165,7 @@ public class TripService{
 	
 	@GET
 	@Path("viewtrips/{user_id}")
-	public Set<Trip> getStation(@PathParam("user_id")int id)
+	public Set<Trip> getTrips(@PathParam("user_id")int id)
 	{
 		User user = em.find(User.class, id);
 		return user.getTrips();

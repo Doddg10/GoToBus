@@ -1,7 +1,6 @@
 package ejbs;
 
 import java.io.Serializable; 
-import java.lang.Integer;
 import java.lang.String;
 import java.util.HashSet;
 import java.util.Set;

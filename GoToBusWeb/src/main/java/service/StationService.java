@@ -21,17 +21,11 @@ public class StationService {
 	
 	@PersistenceContext(unitName="hello")
     private EntityManager em;
-	
-	
-	
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("station")
 	public boolean CreateStation(Station station) {
 		try
 		{
-			
 			em.persist(station);
 			return true;
 		}
@@ -41,15 +35,11 @@ public class StationService {
 	}
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("station/{id}")
 	public Station getStation(@PathParam("id")int id)
 	{
-		
 		return em.find(Station.class, id);
 	}
 
 
-	}   
-
-
+	}

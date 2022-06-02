@@ -1,285 +1,158 @@
 package service;
 
-
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-
 import java.util.List;
-
 import java.util.Set;
 
-
-
 import javax.ejb.EJB;
-
 import javax.ejb.EJBException;
-
 import javax.ejb.Stateless;
-
 import javax.persistence.Query;
-
 import javax.persistence.TypedQuery;
-
 import javax.persistence.EntityManager;
-
 import javax.persistence.PersistenceContext;
-
 import javax.ws.rs.Consumes;
-
 import javax.ws.rs.GET;
-
 import javax.ws.rs.POST;
-
 import javax.ws.rs.Path;
-
 import javax.ws.rs.PathParam;
-
 import javax.ws.rs.Produces;
-
 import javax.ws.rs.core.MediaType;
 
-
-
+import ejbs.Notification;
 import ejbs.Station;
-
 import ejbs.Trip;
-
 import ejbs.User;
 
 
-
-
-
 @Stateless
-
 @Path("trips")
-
 @Consumes(MediaType.APPLICATION_JSON)
-
 @Produces(MediaType.APPLICATION_JSON)
-
 public class TripService{
-
 	
-
 	@PersistenceContext(unitName="hello")
-
     private EntityManager em;
-
 	@PersistenceContext(unitName="hello")
-
 	private EntityManager em2;
-
 	@PersistenceContext(unitName="hello")
-
 	private EntityManager em3;
-
 	
-
 	
-
 	@EJB
-
 	Trip trip;
-
 	@EJB
-
 	User user;
-
 	
-
 	@POST
-
-	@Path("createtrip")
-
+	@Path("trip")
 	public boolean createTrip(Trip Trip)
-
 	{
-
 		try
-
 		{
-
 			em.persist(Trip);
-
 			return true;
-
 		}
-
 		catch(EJBException e)
-
 		{
-
 			throw new EJBException(e);
-
 		}
-
 		
-
 	}
-
 	
-
 	@GET
-
 	@Path("gettrips1")
-
 	public List<Trip> getTrips()
-
 	{
-
 		TypedQuery<Trip> query = em.createQuery("SELECT t FROM Trip t",Trip.class);
-
 		return query.getResultList();
-
 	}
-
 	
-
 	
-
 	@POST
-
 	@Path("gettrips2")
-
 	public List<Trip> getTrips(Trip trip)
-
 	{		
-
 		String from_station = trip.getFrom_station();
-
 		String to_station = trip.getTo_station();
-
 		int x = Integer.parseInt(from_station);
-
 		int y = Integer.parseInt(to_station);
-
 		Station s1= em.find(Station.class, x);
-
 		Station s2= em.find(Station.class, y);
 
-
-
 		Query query = em.createQuery("SELECT t FROM Trip t where t.departure_time >=?1 and t.arrival_time <=?2 and t.from_station = ?3 and t.to_station = ?4");	
-
 		query.setParameter(1, trip.getFrom_date());                    
-
 		query.setParameter(2, trip.getTo_date());	
-
 		query.setParameter(3, s1.getName());
-
 		query.setParameter(4, s2.getName());
-
 	
-
 		List <Trip> trips = (List<Trip>) query.getResultList();
-
 		return trips;
-
 	}
-
 	
-
 	
-
 	@POST
-
 	@Path("booktrip")
-
 	public boolean bookTrips(Trip trip)
-
 	{
-
 		try {
-
+			Notification notification = new Notification();
+			DateTimeFormatter notification_time = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		    LocalDateTime current_time = LocalDateTime.now();  
 			int y = trip.getTrip_id();
-
 			int x = trip.retUserId();
-
 			User user = em.find(User.class, x);
-
 			Trip trip1 = em.find(Trip.class, y);
-
 			em.detach(trip1);
-
 			if(user.checkLog() == false)
-
 			{
-
+				notification.setMessage("Sorry, you are not logged in");
+				notification.setNotification_datetime(notification_time.format(current_time));
 				throw new EJBException();
-
 			}
-
 			if(trip1.getAvailable_seats() == 0)
-
 			{
-
+				notification.setMessage("Sorry, trip " + trip1.getFrom_station() + " to " + trip1.getTo_station() + " has no available seats");
+				notification.setNotification_datetime(notification_time.format(current_time));
 				throw new EJBException();
-
 			}
-
 			trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
-
+			notification.setMessage("You have booked trip from " + trip1.getFrom_station() + " to " + trip1.getTo_station() + " successfully");
+			notification.setNotification_datetime(notification_time.format(current_time));
+			notification.setUser(user);
 			user.addTrip(trip1);
-
+			user.addNotification(notification);
 			trip1.addUser(user);
-
+			em.persist(notification);
 			em.merge(trip1);
-
 			em.merge(user);
-
 			return true;
-
 		}
-
 		catch(Exception e)
-
 		{
-
 			throw new EJBException(e);
-
 		}
-
 		
 
-
-
 	}
-
 	
-
 	@GET
-
 	@Path("viewtrips/{user_id}")
-
 	public Set<Trip> getStation(@PathParam("user_id")int id)
-
 	{
-
 		User user = em.find(User.class, id);
-
 		return user.getTrips();
-
 	}
-
 	
-
 	
-
 	
-
 	
-
 	
-
 	
-
 	
-
 	
-
 	
-
 		
-
 }

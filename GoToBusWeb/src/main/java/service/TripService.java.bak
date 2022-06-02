@@ -61,6 +61,7 @@ import ejbs.User;
 public class TripService{
 
 	
+<<<<<<< Updated upstream
 
 	@PersistenceContext(unitName="hello")
 
@@ -68,6 +69,11 @@ public class TripService{
 
 	@PersistenceContext(unitName="hello")
 
+=======
+	@PersistenceContext(unitName="GoToBus")
+    private EntityManager em;
+	@PersistenceContext(unitName="GoToBus")
+>>>>>>> Stashed changes
 	private EntityManager em2;
 
 	@PersistenceContext(unitName="hello")
@@ -190,55 +196,77 @@ public class TripService{
 
 	{
 
-		
+		try {
 
-		int y = trip.getTrip_id();
+			int y = trip.getTrip_id();
 
-		int x = trip.retUserId();
+			int x = trip.retUserId();
 
-		User user = em.find(User.class, x);
+			User user = em.find(User.class, x);
 
-		Trip trip1 = em.find(Trip.class, y);
+			Trip trip1 = em.find(Trip.class, y);
 
-		em.detach(trip1);
+			em.detach(trip1);
 
-		if(trip1.getAvailable_seats() == 0)
+			if(user.checkLog() == false)
 
-		{
+			{
 
-			return false;
+				throw new EJBException();
+
+			}
+
+			if(trip1.getAvailable_seats() == 0)
+
+			{
+
+				throw new EJBException();
+
+			}
+
+			trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
+
+			user.addTrip(trip1);
+
+			trip1.addUser(user);
+
+			em.merge(trip1);
+
+			em.merge(user);
+
+			return true;
 
 		}
 
-		trip1.setAvailable_seats(trip1.getAvailable_seats()-1);
+		catch(Exception e)
 
-		user.addTrip(trip1);
+		{
 
-		trip1.addUser(user);
+			throw new EJBException(e);
 
-		em.merge(trip1);
+		}
 
-		em.merge(user);
+		
 
-		return true;
+
 
 	}
 
 	
 
-//	@GET
+	@GET
 
-//	@Path("viewtrips/{user_id}")
+	@Path("viewtrips/{user_id}")
 
-//	public Set<Trip> getStation(@PathParam("user_id")int id)
+	public Set<Trip> getStation(@PathParam("user_id")int id)
 
-//	{
+	{
 
-//		User user = em.find(User.class, id);
+		User user = em.find(User.class, id);
 
-//		return user.getTrips();
+		return user.getTrips();
 
-//	}
+	}
 
 	
 

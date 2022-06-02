@@ -43,9 +43,7 @@ import ejbs.User;
 public class UserService{
 
 	
-
-	@PersistenceContext(unitName="hello")
-
+	@PersistenceContext(unitName="GoToBus")
     private EntityManager em;
 
 	

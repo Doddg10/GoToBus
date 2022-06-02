@@ -19,7 +19,7 @@ import ejbs.Station;
 @Path("stations")
 public class StationService {
 	
-	@PersistenceContext(unitName="hello")
+	@PersistenceContext(unitName="GoToBus")
     private EntityManager em;
 	
 	

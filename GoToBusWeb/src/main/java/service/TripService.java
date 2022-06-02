@@ -61,13 +61,9 @@ import ejbs.User;
 public class TripService{
 
 	
-
-	@PersistenceContext(unitName="hello")
-
+	@PersistenceContext(unitName="GoToBus")
     private EntityManager em;
-
-	@PersistenceContext(unitName="hello")
-
+	@PersistenceContext(unitName="GoToBus")
 	private EntityManager em2;
 
 	@PersistenceContext(unitName="hello")

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -36,7 +37,6 @@ public class Trip implements Serializable {
 	private String to_date;
 	@Transient
 	private int user_id;
-
 	@ManyToMany(mappedBy = "trips", fetch = FetchType.EAGER)
 	private Set<User> users;
 	private static final long serialVersionUID = 1L;

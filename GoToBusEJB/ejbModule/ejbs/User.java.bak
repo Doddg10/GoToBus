@@ -30,7 +30,7 @@ public class User implements Serializable {
 	private String password;
 	private String full_name;
 	private String role;
-	
+	private boolean loggedIn = false;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
@@ -55,7 +55,6 @@ public class User implements Serializable {
 		return trips;
 	}
 
-
 	public int getUser_id() {
 		return user_id;
 	}
@@ -68,8 +67,8 @@ public class User implements Serializable {
 
 
 	
-	public User(String userName,String password) {
-		this.username=userName;
+	public User(String username,String password) {
+		this.username=username;
 		this.password=password;
 	}  
 	
@@ -117,5 +116,17 @@ public class User implements Serializable {
 		this.role = role;
 		
 	}
-   
+	public void Login()
+	{
+		this.loggedIn = true;
+	}
+	
+	public boolean checkLog()
+	{
+		return loggedIn;
+	}
+
+	public boolean isLoggedIn() {
+		return loggedIn;
+	}
 }

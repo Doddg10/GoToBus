@@ -26,10 +26,9 @@ import javax.persistence.Transient;
 public class Trip implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	@Column(name = "trip_id")
 	private int trip_id;
-	private String from_station; //cairo
- 	private String to_station;	//Aswan
+	private String from_station;
+ 	private String to_station;
 	private int available_seats;
 	private String departure_time;
 	private String arrival_time;
@@ -40,8 +39,6 @@ public class Trip implements Serializable {
 
 	@ManyToMany(mappedBy = "trips", fetch = FetchType.EAGER)
 	private Set<User> users;
-//	@Transient
-//	private List<User> allUsers;
 	private static final long serialVersionUID = 1L;
 	
 	public Trip()
@@ -112,7 +109,7 @@ public class Trip implements Serializable {
 	public void setUser_id(int user_id) {
 		this.user_id = user_id;
 	}
-
+	
 	
 }
 
